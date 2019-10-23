@@ -21,7 +21,7 @@ source devel/setup.bash
 cd ~/catkin_ws/src
 git clone https://github.com/ixLikro/master-robotics-rospy.git
 ```
-- Do you want to work with gazebo and turtlebot3?  Then install ros dependencies and clone some turtlebot3 repositorie:
+- Do you want to work with gazebo and turtlebot3?  Then install ros dependencies and clone some turtlebot3 repository:
 ```
 sudo apt-get install ros-kinetic-joy ros-kinetic-teleop-twist-joy ros-kinetic-teleop-twist-keyboard ros-kinetic-laser-proc ros-kinetic-rgbd-launch ros-kinetic-depthimage-to-laserscan ros-kinetic-rosserial-arduino ros-kinetic-rosserial-python ros-kinetic-rosserial-server ros-kinetic-rosserial-client ros-kinetic-rosserial-msgs ros-kinetic-amcl ros-kinetic-map-server ros-kinetic-move-base ros-kinetic-urdf ros-kinetic-xacro ros-kinetic-compressed-image-transport ros-kinetic-rqt-image-view ros-kinetic-gmapping ros-kinetic-navigation ros-kinetic-interactive-markers
 cd ~/catkin_ws/src
