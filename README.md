@@ -60,3 +60,18 @@ roslaunch turtlebot3_gazebo turtlebot3_empty_world.launch
 ```
 rosrun hello_world TurtleBot3_drive.py
 ```
+
+Or a gazebo maze simulation (individual Terminals):
+```
+roscore
+```
+```
+roslaunch maze maze2.launch
+```
+```
+export TURTLEBOT3_MODEL=burger
+roslaunch turtlebot3_gazebo turtlebot3_gazebo_rviz.launch
+```
+```
+roslaunch turtlebot3_teleop turtlebot3_teleop_key.launch
+```
