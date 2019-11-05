@@ -49,18 +49,6 @@ rosrun turtlesim turtlesim_node
 rosrun hello_world Turtle_draw_house.py
 ```
 
-Or a gazebo simulation (individual Terminals):
-```
-roscore
-```
-```
-export TURTLEBOT3_MODEL=burger
-roslaunch turtlebot3_gazebo turtlebot3_empty_world.launch
-```
-```
-rosrun hello_world TurtleBot3_drive.py
-```
-
 Or a gazebo maze simulation (individual Terminals):
 ```
 roscore
@@ -68,10 +56,16 @@ roscore
 ```
 roslaunch maze maze2.launch
 ```
+Optional: Robot tries to solve the maze autonomous
+```
+roslaunch turtlebot3_teleop turtlebot3_teleop_key.launch
+```
+Optional: Visualize the senor Data by rviz 
 ```
 export TURTLEBOT3_MODEL=burger
 roslaunch turtlebot3_gazebo turtlebot3_gazebo_rviz.launch
 ```
+Optional: Drive Robot with W A S D
 ```
 roslaunch turtlebot3_teleop turtlebot3_teleop_key.launch
 ```
