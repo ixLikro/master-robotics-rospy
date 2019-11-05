@@ -9,18 +9,38 @@ import Tkinter
 import math
 
 ERROR_CODE=100.0
+
+### Settings and global Variables###
+
+#debug window settings
 CANVAS_HEIGHT=500
 CANVAS_WIDTH=500
 POINT_SCALE_FACTOR=80
 
+#steering velocity that is used if the robot turned to much relative to the right wall
+ALIGN_STEERING = 0.2
+#sterrig velocity that is used if the robot is aligned relative to the right wall but not centered between the left and the right wall
+CENTER_STEERING = 0.1
+
 IS_PERFORMING_TURN_RIGHT=False
 IS_PERFORMING_TURN_LEFT=False
-counter = 0 #right turn counter
+counter = 0 #turn right and left counter
+
+#the lineare velocity that is used to drive foreward
+DEFAULT_LINEAR_VELOCITY=0.15
+#the length or duration of the turn routines. 10 means, the driving logic will be blocked until 10 new scan measurements arrived 
+TURN_ROUTINE_LENGTH=42
+#the turn routine contains 2 parts: 1st part-> turning, 2nd-> part: driving foreward. this constance descripes how long the 1st part is.
+TURN_ROUTING_1st_PART_LENGTH=25
+TURN_ROUTINE_TURN_VELOCITY=0.3
+
+#are walls detected
 wallRight=False
 wallBottom=False
 wallLeft=False
 wallTop=False
 
+#how detect walls
 LOOKUP_RANGE=8
 LOOKUP_RANGE_TOP=1
 RANGE_UNTIL_DETECT_TOP=0.35
@@ -92,8 +112,6 @@ def resetCanvas():
 
 #calculates the steering velocity
 def getSteeringVelocity(listXY, debug=False):
-    ALIGN_STEERING = 0.2
-    CENTER_STEERING = 0.1
     steering = ERROR_CODE
     
     #check right site to align the robot
@@ -177,14 +195,14 @@ def drive(listXY):
         velPublisher.publish(velMessage)
         return
 
-    if(counter >= 42):
+    if(counter >= TURN_ROUTINE_LENGTH):
         IS_PERFORMING_TURN_RIGHT = False
         IS_PERFORMING_TURN_LEFT = False
 
     if(not IS_PERFORMING_TURN_RIGHT and not IS_PERFORMING_TURN_LEFT):
         #drive logic
         if(not wallTop):
-            velMessage.linear.x = 0.15
+            velMessage.linear.x = DEFAULT_LINEAR_VELOCITY
         if(wallRight):
             counter = 0
             velMessage.angular.z = getSteeringVelocity(listXY, True)
@@ -198,25 +216,27 @@ def drive(listXY):
             counter = 0
     if IS_PERFORMING_TURN_RIGHT:
         #performing right turn (first turn right and then drive foreward)
-        if(counter < 25):
-            velMessage.angular.z = - 0.3
+        if(counter < TURN_ROUTING_1st_PART_LENGTH):
+            velMessage.angular.z = -TURN_ROUTINE_TURN_VELOCITY
         else:
-            velMessage.linear.x = 0.15
+            velMessage.linear.x = DEFAULT_LINEAR_VELOCITY
         counter = counter +1
         print("Performing right Turn - "+ str(counter))
 
     if IS_PERFORMING_TURN_LEFT:
         #performing left turn (first turn left and then drive foreward)
-        if(counter < 25):
-            velMessage.angular.z = 0.3
+        if(counter < TURN_ROUTINE_LENGTH):
+            velMessage.angular.z = TURN_ROUTINE_TURN_VELOCITY
         else:
-            velMessage.linear.x = 0.15
+            velMessage.linear.x = DEFAULT_LINEAR_VELOCITY
         counter = counter +1
         print("Performing left Turn - "+ str(counter))
 
     velPublisher.publish(velMessage)
 
-
+#performas a linear regression on the given points. straightline equation: f(x) = a + b * x
+#this function returns a tuple [0] = a, [1] = b
+#Note: the regression is not used in this implementation of the maze solver
 def linearRegression(listXY):
     #calculate average
     averageX=0
@@ -232,7 +252,7 @@ def linearRegression(listXY):
 
     #calculate linear regession
     #b = sum((Xi-averageX)*(Yi-averageY)) / sum(Xi-averageX)*sum(Xi-averageX)
-    #a = a = averageY-b*averageX
+    #a = averageY-b*averageX
 
     #calculate sums
     for XY in listXY:
@@ -245,8 +265,10 @@ def linearRegression(listXY):
 
     return (a,b)
 
-
-def polynomRegression(listXY, grad = 2):
+#performas a polynom regression on the given points. equation: f(x) = return[0] * x ^degree + return[degree+1 - n] * x ^degree-n + ... + return[n]
+#this function returns a list of coefficients starting with the highest degree
+#Note: the regression is not used in this implementation of the maze solver
+def polynomRegression(listXY, degree = 2):
     global regessionRightAB
     X = []
     Y = []
@@ -254,7 +276,7 @@ def polynomRegression(listXY, grad = 2):
         X.append(XY[0])
         Y.append(XY[1])
     
-    regessionRightAB = np.polyfit(X,Y,grad)
+    return = np.polyfit(X,Y,degree)
 
 
 def isWallNearby(ranges):
