@@ -225,7 +225,7 @@ def drive(listXY):
 
     if IS_PERFORMING_TURN_LEFT:
         #performing left turn (first turn left and then drive foreward)
-        if(counter < TURN_ROUTINE_LENGTH):
+        if(counter < TURN_ROUTING_1st_PART_LENGTH):
             velMessage.angular.z = TURN_ROUTINE_TURN_VELOCITY
         else:
             velMessage.linear.x = DEFAULT_LINEAR_VELOCITY
@@ -276,7 +276,7 @@ def polynomRegression(listXY, degree = 2):
         X.append(XY[0])
         Y.append(XY[1])
     
-    return = np.polyfit(X,Y,degree)
+    return np.polyfit(X,Y,degree)
 
 
 def isWallNearby(ranges):
